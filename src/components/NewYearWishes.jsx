@@ -250,6 +250,35 @@ const NewYearWishes = () => {
                 transition={{ delay: 0.6 }}
                 className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full"
             >
+
+                <div className="mb-8">
+                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Your name:
+                    </label>
+                    <input
+                        type="text"
+                        value={yourName}
+                        onChange={(e) => setYourName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
+                        style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        placeholder="Enter your name"
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Your partner's name:
+                    </label>
+                    <input
+                        type="text"
+                        value={partnerName}
+                        onChange={(e) => setPartnerName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
+                        style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        placeholder="Enter partner's name"
+                    />
+                </div>
+
                 <div className="mb-6">
                     <label className="block text-gray-700 mb-3" style={{ fontFamily: "'Quicksand', sans-serif" }}>
                         Your gender:
@@ -270,34 +299,6 @@ const NewYearWishes = () => {
                             Female
                         </button>
                     </div>
-                </div>
-
-                <div className="mb-6">
-                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-                        Your partner's name:
-                    </label>
-                    <input
-                        type="text"
-                        value={partnerName}
-                        onChange={(e) => setPartnerName(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
-                        style={{ fontFamily: "'Quicksand', sans-serif" }}
-                        placeholder="Enter partner's name"
-                    />
-                </div>
-
-                <div className="mb-8">
-                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
-                        Your name:
-                    </label>
-                    <input
-                        type="text"
-                        value={yourName}
-                        onChange={(e) => setYourName(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
-                        style={{ fontFamily: "'Quicksand', sans-serif" }}
-                        placeholder="Enter your name"
-                    />
                 </div>
 
                 <motion.button
