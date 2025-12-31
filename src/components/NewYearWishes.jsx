@@ -34,8 +34,9 @@ const allSongs = [
 ]
 
 const NewYearWishes = () => {
-    const relativeName = 'Your Relative Name Here'
-    const yourName = 'Your Name Here'
+    const [userGender, setUserGender] = useState('male')
+    const [partnerName, setPartnerName] = useState('Your Partner Name Here')
+    const [yourName, setYourName] = useState('Your Name Here')
     const personalNote = 'Thank you for choosing me, every day.'
 
     const [started, setStarted] = useState(false)
@@ -48,6 +49,7 @@ const NewYearWishes = () => {
     const [currentSong, setCurrentSong] = useState('')
     const [confetti, setConfetti] = useState([])
     const [showFloatingHearts, setShowFloatingHearts] = useState(false)
+    const [showNameForm, setShowNameForm] = useState(true)
 
     const audioRef = useRef(null)
     const summaryRef = useRef(null)
@@ -119,6 +121,8 @@ const NewYearWishes = () => {
     }
 
     const startExperience = async () => {
+        if (!partnerName.trim() || !yourName.trim()) return
+        setShowNameForm(false)
         setStarted(true)
         triggerConfetti()
         const audio = audioRef.current
@@ -190,12 +194,14 @@ const NewYearWishes = () => {
         if (navigator.share) {
             navigator.share({
                 title: 'New Year Wishes 2026',
-                text: `My wishes for ${relativeName} in 2026 ✨`
+                text: `My wishes for ${partnerName} in 2026 ✨`
             }).catch(() => { })
         }
     }
 
     const resetExperience = () => {
+        setStarted(false)
+        setShowNameForm(true)
         setCurrentPage(0)
         setSelectedWishes([])
         setSelectedFeelings([])
@@ -203,6 +209,110 @@ const NewYearWishes = () => {
         setCustomWish('')
         playRandomSong()
     }
+
+    const NameForm = () => (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen flex flex-col justify-center items-center px-6 bg-gradient-to-br from-pink-50 via-white to-orange-50"
+        >
+            <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="mb-8"
+            >
+                <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-400 rounded-full blur-2xl opacity-40 animate-pulse"></div>
+                    <PartyPopper className="w-20 h-20 text-rose-500 relative z-10" />
+                </div>
+            </motion.div>
+
+            <motion.h1
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-4xl md:text-5xl font-bold mb-8 text-center"
+                style={{
+                    fontFamily: "'Playfair Display', serif",
+                    background: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 50%, #f97316 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                }}
+            >
+                Personalize Your Wishes
+            </motion.h1>
+
+            <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full"
+            >
+                <div className="mb-6">
+                    <label className="block text-gray-700 mb-3" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Your gender:
+                    </label>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setUserGender('male')}
+                            className={`flex-1 py-3 rounded-xl border-2 transition-all ${userGender === 'male' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-gray-200 text-gray-600'}`}
+                            style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        >
+                            Male
+                        </button>
+                        <button
+                            onClick={() => setUserGender('female')}
+                            className={`flex-1 py-3 rounded-xl border-2 transition-all ${userGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-gray-200 text-gray-600'}`}
+                            style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        >
+                            Female
+                        </button>
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Your partner's name:
+                    </label>
+                    <input
+                        type="text"
+                        value={partnerName}
+                        onChange={(e) => setPartnerName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
+                        style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        placeholder="Enter partner's name"
+                    />
+                </div>
+
+                <div className="mb-8">
+                    <label className="block text-gray-700 mb-2" style={{ fontFamily: "'Quicksand', sans-serif" }}>
+                        Your name:
+                    </label>
+                    <input
+                        type="text"
+                        value={yourName}
+                        onChange={(e) => setYourName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-rose-400 focus:outline-none transition-all"
+                        style={{ fontFamily: "'Quicksand', sans-serif" }}
+                        placeholder="Enter your name"
+                    />
+                </div>
+
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={startExperience}
+                    disabled={!partnerName.trim() || !yourName.trim()}
+                    className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all ${!partnerName.trim() || !yourName.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-rose-500 to-pink-500 hover:shadow-xl'}`}
+                    style={{ fontFamily: "'Quicksand', sans-serif" }}
+                >
+                    Begin Experience
+                </motion.button>
+            </motion.div>
+        </motion.div>
+    )
 
     const Welcome = () => (
         <motion.div
@@ -280,7 +390,7 @@ const NewYearWishes = () => {
                 className="text-5xl md:text-6xl font-light mb-8"
                 style={{ fontFamily: "'Dancing Script', cursive", color: '#be123c' }}
             >
-                {relativeName}
+                {partnerName}
             </motion.p>
 
             <motion.div
@@ -637,7 +747,7 @@ const NewYearWishes = () => {
                             backgroundClip: 'text'
                         }}
                     >
-                        For You, {relativeName}
+                        For You, {partnerName}
                     </motion.h2>
 
                     <motion.p
@@ -773,6 +883,10 @@ const NewYearWishes = () => {
             </div>
         </motion.div>
     )
+
+    if (showNameForm) {
+        return <NameForm />
+    }
 
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-white to-orange-50 overflow-hidden">
