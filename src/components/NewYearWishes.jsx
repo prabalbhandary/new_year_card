@@ -38,7 +38,7 @@ const NewYearWishes = () => {
     const [partnerName, setPartnerName] = useState('Your Partner Name Here')
     const [yourName, setYourName] = useState('Your Name Here')
     const personalNote = 'Thank you for choosing me, every day.'
-
+    
     const [started, setStarted] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
     const [selectedWishes, setSelectedWishes] = useState([])
@@ -50,9 +50,11 @@ const NewYearWishes = () => {
     const [confetti, setConfetti] = useState([])
     const [showFloatingHearts, setShowFloatingHearts] = useState(false)
     const [showNameForm, setShowNameForm] = useState(true)
+    const [audioStarted, setAudioStarted] = useState(false)
 
     const audioRef = useRef(null)
     const summaryRef = useRef(null)
+    const hasInitialized = useRef(false)
 
     const wishes = [
         'A year where you feel deeply supported',
@@ -83,12 +85,15 @@ const NewYearWishes = () => {
 
     const playRandomSong = () => {
         const randomIndex = Math.floor(Math.random() * allSongs.length)
-        const songPath = require(`../assets/${allSongs[randomIndex]}`)
+        const songPath = `/assets/${allSongs[randomIndex]}`
         setCurrentSong(songPath)
     }
 
     useEffect(() => {
-        playRandomSong()
+        if (!hasInitialized.current) {
+            playRandomSong()
+            hasInitialized.current = true
+        }
     }, [])
 
     useEffect(() => {
@@ -96,6 +101,7 @@ const NewYearWishes = () => {
         if (!audio || !currentSong) return
 
         audio.src = currentSong
+        audio.load()
 
         const handleSongEnd = () => {
             playRandomSong()
@@ -125,12 +131,15 @@ const NewYearWishes = () => {
         setShowNameForm(false)
         setStarted(true)
         triggerConfetti()
-        const audio = audioRef.current
-        if (audio && musicOn) {
-            audio.volume = 0.6
+        
+        if (audioRef.current && musicOn && !audioStarted) {
             try {
-                await audio.play()
-            } catch { }
+                audioRef.current.volume = 0.6
+                await audioRef.current.play()
+                setAudioStarted(true)
+            } catch (error) {
+                console.log('Audio playback failed:', error)
+            }
         }
     }
 
@@ -207,6 +216,7 @@ const NewYearWishes = () => {
         setSelectedFeelings([])
         setSelectedMemories([])
         setCustomWish('')
+        setAudioStarted(false)
         playRandomSong()
     }
 
@@ -256,6 +266,7 @@ const NewYearWishes = () => {
                     </label>
                     <div className="flex gap-4">
                         <button
+                            type="button"
                             onClick={() => setUserGender('male')}
                             className={`flex-1 py-3 rounded-xl border-2 transition-all ${userGender === 'male' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-gray-200 text-gray-600'}`}
                             style={{ fontFamily: "'Quicksand', sans-serif" }}
@@ -263,6 +274,7 @@ const NewYearWishes = () => {
                             Male
                         </button>
                         <button
+                            type="button"
                             onClick={() => setUserGender('female')}
                             className={`flex-1 py-3 rounded-xl border-2 transition-all ${userGender === 'female' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-gray-200 text-gray-600'}`}
                             style={{ fontFamily: "'Quicksand', sans-serif" }}
@@ -301,6 +313,7 @@ const NewYearWishes = () => {
                 </div>
 
                 <motion.button
+                    type="button"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={startExperience}
@@ -858,6 +871,7 @@ const NewYearWishes = () => {
 
                     <div className="flex justify-center gap-3 flex-wrap">
                         <button
+                            type="button"
                             onClick={downloadImage}
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
                         >
@@ -865,6 +879,7 @@ const NewYearWishes = () => {
                             Download
                         </button>
                         <button
+                            type="button"
                             onClick={shareExperience}
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-rose-500 font-semibold shadow-lg hover:shadow-xl transition-all border-2 border-rose-200"
                         >
@@ -872,6 +887,7 @@ const NewYearWishes = () => {
                             Share
                         </button>
                         <button
+                            type="button"
                             onClick={resetExperience}
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gray-100 text-gray-700 font-semibold shadow-lg hover:shadow-xl transition-all"
                         >
@@ -890,8 +906,8 @@ const NewYearWishes = () => {
 
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-white to-orange-50 overflow-hidden">
-            {currentSong && <audio ref={audioRef} src={currentSong} />}
-
+            <audio ref={audioRef} preload="auto" />
+            
             <div className="fixed inset-0 pointer-events-none z-50">
                 {confetti.map((piece) => (
                     <motion.div
@@ -922,6 +938,7 @@ const NewYearWishes = () => {
                         <PartyPopper className="w-16 h-16 text-rose-400 mb-4" />
                     </motion.div>
                     <button
+                        type="button"
                         onClick={startExperience}
                         className="px-10 py-6 text-2xl font-bold rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-2xl hover:shadow-xl hover:scale-105 transition-all"
                         style={{ fontFamily: "'Quicksand', sans-serif" }}
@@ -935,7 +952,7 @@ const NewYearWishes = () => {
             ) : (
                 <div>
                     <div className="absolute top-5 right-5 flex gap-2 z-20">
-                        <button onClick={toggleMusic} className="p-3 rounded-full bg-white shadow-md hover:shadow-xl transition-all">
+                        <button type="button" onClick={toggleMusic} className="p-3 rounded-full bg-white shadow-md hover:shadow-xl transition-all">
                             {musicOn ? <Volume2 className="w-6 h-6 text-rose-500" /> : <VolumeX className="w-6 h-6 text-gray-400" />}
                         </button>
                     </div>
@@ -961,6 +978,7 @@ const NewYearWishes = () => {
                     <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-20">
                         {currentPage > 0 && (
                             <motion.button
+                                type="button"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={prevPage}
@@ -971,6 +989,7 @@ const NewYearWishes = () => {
                         )}
                         {currentPage < 4 && (
                             <motion.button
+                                type="button"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={nextPage}
@@ -986,4 +1005,4 @@ const NewYearWishes = () => {
     )
 }
 
-export default NewYearWishes
+export default NewYearWishes;
