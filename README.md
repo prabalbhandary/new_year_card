@@ -21,7 +21,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Check out the live demo here:
 
-[View Demo](https://prabal-newyearwish.netlify.app/)
+[View Demo](https://prabal-newyearwhish.netlify.app/)
 
 
 
